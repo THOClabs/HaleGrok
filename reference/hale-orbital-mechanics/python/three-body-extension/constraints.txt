@@ -1,0 +1,10 @@
+# Exact version pins for reproducible oracle runs in CI.
+# The validation reference data (validation/data/*.csv) was generated with
+# these versions; `validation/generate_reference.py --check` is only
+# guaranteed to pass bit-for-bit against them.
+#
+# Usage: pip install -r requirements.txt -c constraints.txt
+numpy==2.4.6
+scipy==1.17.1
+pytest==9.1.1
+pytest-cov==7.1.0

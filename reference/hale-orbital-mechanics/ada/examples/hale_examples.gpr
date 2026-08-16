@@ -1,0 +1,42 @@
+-- HALE Orbital Mechanics - Example Programs
+-- Ada 2022 Implementation (matches library)
+
+with "../hale_orbital.gpr";
+
+project Hale_Examples is
+
+   for Source_Dirs use (".");
+   for Object_Dir use "../obj/examples";
+   for Exec_Dir use "../bin";
+
+   for Main use ("hohmann_transfer.adb",
+                 "lagrange_points.adb",
+                 "orbit_propagation.adb",
+                 "earth_mars_mission.adb",
+                 "lambert_intercept.adb",
+                 "trajectory_display.adb",
+                 "performance_benchmarks.adb");
+
+   type Build_Mode is ("debug", "release");
+   Mode : Build_Mode := external ("BUILD_MODE", "debug");
+
+   package Compiler is
+      Common_Switches := ("-gnat2022",
+                          "-gnatwa",
+                          "-gnata");
+
+      case Mode is
+         when "debug" =>
+            for Default_Switches ("Ada") use
+               Common_Switches & ("-g", "-O0");
+         when "release" =>
+            for Default_Switches ("Ada") use
+               Common_Switches & ("-O2", "-gnatn");
+      end case;
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("Ada") use ("-E");
+   end Binder;
+
+end Hale_Examples;

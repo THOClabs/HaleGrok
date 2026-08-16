@@ -1,0 +1,24 @@
+node_modules
+.output
+.vinxi
+.nitro
+.tanstack
+.vercel
+dist
+build
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+screenshots
+artifacts
+/tmp
+*.tsbuildinfo
+routeTree.gen.ts
+.pglite
+pglite-debug*
+coverage
+.cache
+# Nested clone — HaleGrok vendors a snapshot under reference/ without its .git
+reference/hale-orbital-mechanics/.git

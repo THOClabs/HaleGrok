@@ -1,0 +1,79 @@
+-- HALE Orbital Mechanics Library
+-- Ada 2012 Implementation
+-- Based on Francis J. Hale's "Introduction to Space Flight"
+
+project Hale_Orbital is
+
+   for Source_Dirs use ("src", "src/threebody");
+   for Object_Dir use "obj";
+   for Library_Name use "hale_orbital";
+   for Library_Dir use "lib";
+   for Library_Kind use "static";
+
+   type Build_Mode is ("debug", "release", "spark", "deterministic");
+   Mode : Build_Mode := external ("BUILD_MODE", "debug");
+
+   package Compiler is
+      Common_Switches := ("-gnat2022",      -- Ada 2012 standard
+                          "-gnatwa",        -- All warnings on
+                          "-gnatwJ",        -- Suppress obsolescent feature warnings
+                          "-gnatwU",        -- Suppress unreferenced-entity warnings
+                          "-gnatwM",        -- Suppress useless-assignment warnings
+                          "-gnatwF",        -- Suppress unreferenced-formal warnings
+                          "-gnatwK",        -- Suppress could-be-constant warnings
+                          "-gnatwR",        -- Suppress redundant-with-clause warnings
+                          "-gnatw.P",       -- Suppress suspicious-actual-order warnings
+                          "-gnatw.X",       -- Suppress no-return procedure warnings
+                          "-gnaty3M200",    -- Style: 3-char indent, line<=200
+                          "-gnata",         -- Enable assertions
+                          "-gnatVa",        -- All validity checks
+                          "-gnatwe");       -- Warnings-as-errors
+
+      case Mode is
+         when "debug" =>
+            for Default_Switches ("Ada") use
+               Common_Switches & ("-g",           -- Debug info
+                                  "-gnato",       -- Overflow checking
+                                  "-fstack-check", -- Stack checking
+                                  "-O0");         -- No optimization
+
+         when "release" =>
+            for Default_Switches ("Ada") use
+               Common_Switches & ("-O2",          -- Optimization level 2
+                                  "-gnatn",       -- Enable inlining
+                                  "-gnatp");      -- Suppress checks for speed
+
+         when "spark" =>
+            --  SPARK analysis mode: enable SPARK checking, no optimization
+            for Default_Switches ("Ada") use
+               Common_Switches & ("-g",           -- Debug info for proof traces
+                                  "-gnato",       -- Overflow checking
+                                  "-O0");         -- No optimization for proof
+
+         when "deterministic" =>
+            --  Deterministic FP mode for cross-platform reproducibility (ISS-024)
+            --  Ensures consistent floating-point results across platforms
+            for Default_Switches ("Ada") use
+               Common_Switches & ("-g",                     -- Debug info
+                                  "-gnato",                 -- Overflow checking
+                                  "-O2",                    -- Optimization for realistic testing
+                                  "-ffp-contract=off",      -- Disable FMA contractions
+                                  "-fno-fast-math",         -- Strict IEEE 754 compliance
+                                  "-frounding-math",        -- Honor dynamic rounding mode
+                                  "-fsignaling-nans");      -- Signal on NaN operations
+      end case;
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("Ada") use ("-E");  -- Store tracebacks in exceptions
+   end Binder;
+
+   package Linker is
+      for Default_Switches ("Ada") use ("-lm");  -- Link math library
+   end Linker;
+
+   package Documentation is
+      for Documentation_Dir use "docs/api_reference";
+   end Documentation;
+
+end Hale_Orbital;

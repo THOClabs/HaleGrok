@@ -1,0 +1,92 @@
+-- HALE Orbital Mechanics - Coverage Project File
+-- DO-178C Level B: Decision Coverage Configuration
+-- Reference: level-b-roadmap.md Phase 1.1
+
+with "hale_orbital.gpr";
+
+project Coverage is
+
+   for Source_Dirs use ("tests");
+   for Object_Dir use "obj/coverage";
+   for Exec_Dir use "bin";
+   for Main use ("test_driver_coverage.adb");
+
+   --  Coverage level: stmt+decision for DO-178C Level B
+   type Coverage_Level is ("stmt", "stmt+decision", "stmt+mcdc");
+   Level : Coverage_Level := external ("COVERAGE_LEVEL", "stmt+decision");
+
+   package Compiler is
+      --  Compile with coverage instrumentation support
+      for Default_Switches ("Ada") use
+         ("-gnat2022",       -- Ada 2022 standard (matches library)
+          "-gnatwa",         -- All warnings
+          "-gnata",          -- Enable assertions
+          "-g",              -- Debug info (required for coverage)
+          "-O0",             -- No optimization (accurate line mapping)
+          "-ftest-coverage", -- Enable gcov-compatible coverage
+          "-fprofile-arcs"); -- Enable profiling arcs
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("Ada") use ("-E");  -- Store tracebacks
+   end Binder;
+
+   package Linker is
+      for Default_Switches ("Ada") use
+         ("-lm",             -- Link math library
+          "-lgcov",          -- Link gcov library for coverage
+          "--coverage");     -- Enable coverage linking
+   end Linker;
+
+   --  GNATcoverage specific settings
+   package Coverage_Pkg is
+      --  Coverage level based on DO-178C DAL
+      --  Level C: stmt (statement coverage)
+      --  Level B: stmt+decision (statement + decision coverage)
+      --  Level A: stmt+mcdc (statement + MC/DC coverage)
+
+      case Level is
+         when "stmt" =>
+            for Switches use
+               ("--level=stmt",
+                "--annotate=xcov+",
+                "--annotate=html+",
+                "--output-dir=coverage/stmt");
+
+         when "stmt+decision" =>
+            for Switches use
+               ("--level=stmt+decision",
+                "--annotate=xcov+",
+                "--annotate=html+",
+                "--output-dir=coverage/decision");
+
+         when "stmt+mcdc" =>
+            for Switches use
+               ("--level=stmt+mcdc",
+                "--annotate=xcov+",
+                "--annotate=html+",
+                "--output-dir=coverage/mcdc");
+      end case;
+   end Coverage_Pkg;
+
+   --  Units of interest for coverage analysis
+   --  Excludes test code, only measures library code
+   package Units is
+      for Units use
+         ("hale_orbital",
+          "hale_orbital.types",
+          "hale_orbital.constants",
+          "hale_orbital.vectors",
+          "hale_orbital.matrices",
+          "hale_orbital.elements",
+          "hale_orbital.kepler",
+          "hale_orbital.stumpff",
+          "hale_orbital.twobody",
+          "hale_orbital.lambert",
+          "hale_orbital.propagation",
+          "hale_orbital.maneuvers",
+          "hale_orbital.threebody",
+          "hale_orbital.interplanetary");
+   end Units;
+
+end Coverage;
