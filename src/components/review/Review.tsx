@@ -1,8 +1,9 @@
-import { shortlist } from "@/hale/review/gauntlet";
+import { shortlist, runReviewGauntlet } from "@/hale/review/gauntlet";
 import { xComposeUrl } from "@/hale/x-compose";
 import { Button } from "@/components/ui/button";
 
 const kept = shortlist();
+const tally = runReviewGauntlet();
 
 export function Review() {
   return (
@@ -16,7 +17,9 @@ export function Review() {
             Cut for X
           </h1>
         </div>
-        <p className="font-mono text-xs text-house-mute">{kept.length} passed · 12 killed</p>
+        <p className="font-mono text-xs text-house-mute">
+          {tally.kept} passed · {tally.killed} killed
+        </p>
       </header>
 
       <ol className="mx-auto flex max-w-4xl flex-col gap-12 px-4 pb-16 md:px-6">
