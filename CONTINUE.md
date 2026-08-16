@@ -62,7 +62,7 @@ Each continue-round offers **six to ten films** (a slate), not one.
 - [x] S1g — Episode 1 The Trojan Twin: 2:00 4K master from the L4 gauntlet
 - [x] S1h — Episode 2 Ten Percent: 2:00 4K. Routh crossed. μ = 0.0909
 - [x] S1i — Ep 03–06 4K: Unseating, Hill’s Door, v∞, Nine Point Three
-- [ ] S1j — Ep 07–12 4K (Forty-Five through Luna)
+- [x] S1j — Ep 07–12 4K: Forty-Five, Iron Sinks, Roche, Hours, Five-Hour Terra, Luna
 - [ ] S2 — Kepler elliptic/hyperbolic + universal propagation (Ada Kepler) — in progress
 - [ ] S3 — Production 021 Earth–Mars patched-conic (Ada earth_mars_mission)
 - [ ] S4 — Halo / Lyapunov differential correction (Ada Find_Halo_Orbit)

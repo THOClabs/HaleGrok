@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { FilmDef } from "@/hale/theia/films";
-import { approachHyperbola, HILL_AU, wanderPath } from "@/hale/theia/paths";
+import { approachHyperbola, earthMoon, grazePath, HILL_AU, LUNA_KM, R3, R5, ROCHE_KM, wanderPath } from "@/hale/theia/paths";
 
 const DURATION = 120;
 type Cam = { x: number; y: number; z: number };
@@ -46,6 +46,66 @@ const CAMS: Record<FilmDef["mode"], Cam[][]> = {
     [{ x: 4000, y: 500, z: 14000 }, { x: 3500, y: 200, z: 11000 }],
     [{ x: 2200, y: 2200, z: 13000 }, { x: 1800, y: 1600, z: 10500 }],
   ],
+  graze: [
+    [{ x: 2000, y: 6000, z: 32000 }, { x: 3000, y: 5000, z: 24000 }],
+    [{ x: 4000, y: 4000, z: 20000 }, { x: 5000, y: 5000, z: 16000 }],
+    [{ x: 0, y: 0, z: 24000 }, { x: 1000, y: 1000, z: 18000 }],
+    [{ x: -8000, y: 8000, z: 36000 }, { x: -4000, y: 6000, z: 28000 }],
+    [{ x: 2000, y: 2000, z: 22000 }, { x: 3000, y: 2500, z: 17000 }],
+    [{ x: 0, y: 0, z: 28000 }, { x: 0, y: 0, z: 22000 }],
+    [{ x: 6000, y: 2000, z: 18000 }, { x: 5500, y: 4000, z: 14000 }],
+    [{ x: 5000, y: 5500, z: 16000 }, { x: 6500, y: 6500, z: 13000 }],
+  ],
+  energy: [
+    [{ x: 0, y: 0, z: 50000 }, { x: 2000, y: 1000, z: 42000 }],
+    [{ x: 0, y: 0, z: 70000 }, { x: 0, y: 0, z: 60000 }],
+    [{ x: 3000, y: 3000, z: 22000 }, { x: 4000, y: 3500, z: 18000 }],
+    [{ x: 0, y: 0, z: 40000 }, { x: 0, y: 0, z: 32000 }],
+    [{ x: -2000, y: 4000, z: 26000 }, { x: 0, y: 3000, z: 20000 }],
+    [{ x: 2000, y: 2000, z: 18000 }, { x: 2500, y: 2200, z: 15000 }],
+    [{ x: 0, y: 0, z: 55000 }, { x: 0, y: 0, z: 48000 }],
+    [{ x: 0, y: 0, z: 80000 }, { x: 0, y: 0, z: 70000 }],
+  ],
+  roche: [
+    [{ x: 0, y: 0, z: 50000 }, { x: 2000, y: 0, z: 40000 }],
+    [{ x: 0, y: 0, z: 42000 }, { x: 0, y: 0, z: 34000 }],
+    [{ x: 0, y: 0, z: 28000 }, { x: 0, y: 0, z: 22000 }],
+    [{ x: 8000, y: 4000, z: 36000 }, { x: 6000, y: 2000, z: 30000 }],
+    [{ x: 0, y: 0, z: 38000 }, { x: 2000, y: 2000, z: 30000 }],
+    [{ x: 0, y: 0, z: 80000 }, { x: 10000, y: 0, z: 70000 }],
+    [{ x: 80000, y: 40000, z: 520000 }, { x: 120000, y: 20000, z: 460000 }],
+    [{ x: 0, y: 0, z: 90000 }, { x: 0, y: 0, z: 75000 }],
+  ],
+  clocks: [
+    [{ x: 0, y: 0, z: 80000 }, { x: 0, y: 0, z: 68000 }],
+    [{ x: 0, y: 0, z: 50000 }, { x: 0, y: 0, z: 42000 }],
+    [{ x: 0, y: 0, z: 80000 }, { x: 0, y: 0, z: 70000 }],
+    [{ x: 0, y: 0, z: 42000 }, { x: 0, y: 0, z: 36000 }],
+    [{ x: 10000, y: 8000, z: 70000 }, { x: 8000, y: 6000, z: 60000 }],
+    [{ x: 0, y: 0, z: 90000 }, { x: 0, y: 0, z: 80000 }],
+    [{ x: 0, y: 0, z: 75000 }, { x: 0, y: 0, z: 65000 }],
+    [{ x: 0, y: 0, z: 48000 }, { x: 0, y: 0, z: 40000 }],
+  ],
+  spin: [
+    [{ x: 0, y: 0, z: 28000 }, { x: 1000, y: 500, z: 22000 }],
+    [{ x: 0, y: 0, z: 18000 }, { x: 0, y: 0, z: 15000 }],
+    [{ x: 0, y: 0, z: 26000 }, { x: 0, y: 0, z: 22000 }],
+    [{ x: 0, y: 0, z: 40000 }, { x: 0, y: 0, z: 34000 }],
+    [{ x: 80000, y: 0, z: 500000 }, { x: 100000, y: 20000, z: 440000 }],
+    [{ x: 60000, y: 20000, z: 480000 }, { x: 80000, y: 0, z: 420000 }],
+    [{ x: 0, y: 0, z: 32000 }, { x: 2000, y: 0, z: 26000 }],
+    [{ x: 0, y: 0, z: 24000 }, { x: 0, y: 0, z: 20000 }],
+  ],
+  luna: [
+    [{ x: 0.4, y: 0.3, z: 2.8 }, { x: 0.45, y: 0.35, z: 2.4 }],
+    [{ x: 0.75, y: 0.05, z: 1.1 }, { x: 0.82, y: 0.02, z: 0.8 }],
+    [{ x: 0.83, y: 0.0, z: 0.7 }, { x: 0.84, y: 0.0, z: 0.5 }],
+    [{ x: 0.45, y: 0.7, z: 1.6 }, { x: 0.49, y: 0.82, z: 1.2 }],
+    [{ x: 0.4, y: 0.75, z: 1.8 }, { x: 0.48, y: 0.86, z: 1.3 }],
+    [{ x: 0.2, y: 0.2, z: 3.2 }, { x: 0.25, y: 0.25, z: 2.8 }],
+    [{ x: 0.35, y: 0.4, z: 2.6 }, { x: 0.4, y: 0.45, z: 2.2 }],
+    [{ x: 0.3, y: 0.35, z: 3.0 }, { x: 0.32, y: 0.38, z: 2.7 }],
+  ],
 };
 
 function lerp(a: number, b: number, t: number) {
@@ -61,6 +121,8 @@ function hash(i: number) {
 
 const WANDER = wanderPath();
 const HYPER = approachHyperbola();
+const GRAZE = grazePath();
+const EM = earthMoon();
 
 export function HaleStage({ film, startAt = 0 }: { film: FilmDef; startAt?: number }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -228,6 +290,112 @@ export function HaleStage({ film, startAt = 0 }: { film: FilmDef; startAt?: numb
         const p = HYPER.points[prog]!;
         const Th = map(p.x, p.y);
         body(Th.X, Th.Y, theiaR, sunX, T.Y, "#7a3f2a", "#d9a06a");
+      }
+
+      if (film.mode === "graze" || film.mode === "energy") {
+        ctx.beginPath();
+        GRAZE.points.forEach((p, k) => {
+          const m = map(p.x, p.y);
+          if (k === 0) ctx.moveTo(m.X, m.Y);
+          else ctx.lineTo(m.X, m.Y);
+        });
+        ctx.strokeStyle = film.mode === "energy" ? "rgba(180,160,140,0.18)" : "rgba(200,150,100,0.42)";
+        ctx.stroke();
+        const T = map(0, 0);
+        const terraR = Math.max(7, 26 * (8000 / cam.z));
+        const theiaR = terraR * 0.53;
+        body(T.X, T.Y, terraR, T.X - 180, T.Y, "#4f86b8", "#d7e8f8");
+        const prog = Math.min(GRAZE.points.length - 1, Math.floor((t / DURATION) * GRAZE.points.length));
+        const p = film.mode === "energy" ? GRAZE.contact : GRAZE.points[prog]!;
+        const Th = map(p.x, p.y);
+        body(Th.X, Th.Y, theiaR, T.X - 180, T.Y, "#7a3f2a", "#d9a06a");
+        if (film.mode === "graze") {
+          ctx.strokeStyle = "rgba(236,232,225,0.2)";
+          ctx.beginPath();
+          ctx.arc(T.X, T.Y, GRAZE.b * scale, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      if (film.mode === "roche" || film.mode === "clocks") {
+        const T = map(0, 0);
+        const terraR = Math.max(5, 22 * (20000 / cam.z));
+        body(T.X, T.Y, terraR, T.X - 200, T.Y, "#4f86b8", "#d7e8f8");
+        const rings = film.mode === "clocks" ? [ROCHE_KM, R3, R5] : [ROCHE_KM];
+        rings.forEach((rad, k) => {
+          ctx.beginPath();
+          ctx.arc(T.X, T.Y, rad * scale, 0, Math.PI * 2);
+          ctx.strokeStyle = k === 0 ? "rgba(200,160,120,0.35)" : "rgba(180,200,220,0.22)";
+          ctx.setLineDash(k === 0 ? [] : [4, 5]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          const period = k === 0 ? 6.88 : k === 1 ? 7.32 : 15.74;
+          const ang = (t / DURATION) * (24 / period) * Math.PI * 2;
+          const d = map(Math.cos(ang) * rad, Math.sin(ang) * rad);
+          ctx.fillStyle = k === 0 ? "#c4a080" : "#d8d0c4";
+          ctx.beginPath();
+          ctx.arc(d.X, d.Y, 2.4, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        if (film.mode === "roche") {
+          for (let k = 0; k < 70; k++) {
+            const a = hash(k + 20) * Math.PI * 2 + t * 0.02;
+            const rr = ROCHE_KM * (0.55 + hash(k + 21) * 0.42);
+            const d = map(Math.cos(a) * rr, Math.sin(a) * rr);
+            ctx.globalAlpha = 0.18;
+            ctx.fillStyle = "#c4a080";
+            ctx.fillRect(d.X, d.Y, 1.4, 1.4);
+          }
+          ctx.globalAlpha = 1;
+          const L = map(LUNA_KM, 0);
+          body(L.X, L.Y, Math.max(2, terraR * 0.27), T.X, T.Y, "#b8b0a4", "#eee8dc");
+        }
+      }
+
+      if (film.mode === "spin") {
+        const T = map(0, 0);
+        const terraR = Math.max(10, 36 * (12000 / cam.z));
+        body(T.X, T.Y, terraR, T.X - 200, T.Y, "#4f86b8", "#d7e8f8");
+        const a5 = (t / DURATION) * Math.PI * 8;
+        const a24 = (t / DURATION) * Math.PI * 1.67;
+        ctx.strokeStyle = "rgba(236,232,225,0.7)";
+        ctx.beginPath();
+        ctx.arc(T.X + Math.cos(a5) * terraR * 0.72, T.Y + Math.sin(a5) * terraR * 0.72, 3.2, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.strokeStyle = "rgba(236,232,225,0.22)";
+        ctx.beginPath();
+        ctx.arc(T.X + Math.cos(a24) * terraR * 0.72, T.Y + Math.sin(a24) * terraR * 0.72, 2.2, 0, Math.PI * 2);
+        ctx.stroke();
+        const L = map(LUNA_KM, 0);
+        body(L.X, L.Y, Math.max(2, terraR * 0.27), T.X, T.Y, "#b8b0a4", "#eee8dc");
+      }
+
+      if (film.mode === "luna") {
+        const C = map(0, 0);
+        ctx.beginPath();
+        ctx.arc(C.X, C.Y, scale, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(210,200,180,0.1)";
+        ctx.stroke();
+        const E = map(EM.earth.x, EM.earth.y);
+        const M = map(EM.moon.x, EM.moon.y);
+        const L1 = map(EM.L1.x, EM.L1.y);
+        const L4 = map(EM.L4.x, EM.L4.y);
+        body(E.X, E.Y, Math.max(5, 10 * (0.8 / cam.z)), E.X - 20, E.Y, "#4f86b8", "#d7e8f8");
+        body(M.X, M.Y, Math.max(2.4, 4 * (0.8 / cam.z)), E.X, E.Y, "#b8b0a4", "#eee8dc");
+        ctx.strokeStyle = "rgba(236,232,225,0.28)";
+        ctx.beginPath();
+        ctx.arc(L1.X, L1.Y, 4, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(L4.X, L4.Y, 4, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(E.X, E.Y);
+        ctx.lineTo(M.X, M.Y);
+        ctx.lineTo(L4.X, L4.Y);
+        ctx.closePath();
+        ctx.strokeStyle = "rgba(212,208,200,0.12)";
+        ctx.stroke();
       }
 
       const vig = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.3, w / 2, h / 2, Math.max(w, h) * 0.72);
