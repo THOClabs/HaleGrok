@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Splash } from "@/components/splash/Splash";
+import { Review } from "@/components/review/Review";
 
 export const Route = createFileRoute("/")({
-  component: Splash,
+  component: Review,
   ssr: false,
 });
