@@ -20,5 +20,6 @@ routeTree.gen.ts
 pglite-debug*
 coverage
 .cache
-# Nested clone — HaleGrok vendors a snapshot under reference/ without its .git
+public/films/016/clip-*.mp4
+public/films/016/raw-*.mp4
 reference/hale-orbital-mechanics/.git
