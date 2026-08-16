@@ -1,0 +1,39 @@
+-- HALE Orbital Mechanics Test Suite
+-- Uses AUnit testing framework
+
+with "../hale_orbital.gpr";
+
+project Hale_Tests is
+
+   for Source_Dirs use (".");
+   for Object_Dir use "../obj/tests";
+   for Exec_Dir use "../bin";
+   for Main use ("run_tests.adb", "run_all_tests.adb");
+
+   package Compiler is
+      for Default_Switches ("Ada") use
+         ("-gnat2022",     -- Ada 2022 (matches library)
+          "-gnatwa",       -- All warnings
+          "-gnatwJ",       -- Suppress obsolescent feature warnings
+          "-gnatwU",       -- Suppress unreferenced-entity warnings
+          "-gnatwM",       -- Suppress useless-assignment warnings
+          "-gnatwF",       -- Suppress unreferenced-formal warnings
+          "-gnatwK",       -- Suppress could-be-constant warnings
+          "-gnatwR",       -- Suppress redundant-with-clause warnings
+          "-gnatwC",       -- Suppress condition-always-true/false warnings
+          "-gnatw.P",      -- Suppress suspicious-actual-order warnings
+          "-gnatw.X",      -- Suppress no-return procedure warnings
+          "-gnata",        -- Enable assertions
+          "-g",            -- Debug info
+          "-O0");          -- No optimization for tests
+   end Compiler;
+
+   package Binder is
+      for Default_Switches ("Ada") use ("-E");  -- Store tracebacks
+   end Binder;
+
+   package Linker is
+      for Default_Switches ("Ada") use ("-lm");  -- Link math library
+   end Linker;
+
+end Hale_Tests;

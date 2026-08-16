@@ -1,0 +1,7 @@
+# Ignore cloned repositories (they're external dependencies)
+# Keep only the README.md
+cubedos/
+awesome-ada/
+gnatstudio/
+Ada_Drivers_Library/
+libadalang/

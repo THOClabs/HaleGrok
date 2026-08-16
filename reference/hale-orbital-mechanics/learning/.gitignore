@@ -1,0 +1,3 @@
+# Ignore downloaded PDFs (they're from external sources)
+# Keep only the README.md with links to resources
+*.pdf

@@ -1,0 +1,85 @@
+# HALE Orbital Mechanics
+
+A Python implementation of classical orbital mechanics based on Francis J. Hale's *Introduction to Space Flight* (Prentice Hall, 1994, ISBN 0-13-481912-8).
+
+## For Claude Code
+
+This project uses the **Ralph Wiggum method** for autonomous iterative development.
+
+Start here:
+1. Read `PROMPT.md` - The loop driver
+2. Check `IMPLEMENTATION_PLAN.md` - Current progress
+3. Reference `CLAUDE.md` - Implementation guidance
+4. Study `specs/` - Technical specifications (read-only)
+
+## Quick Start
+
+```bash
+# Install dependencies
+pip install numpy scipy pytest
+
+# Run tests
+pytest tests/ -v
+
+# Example usage
+python -c "from hale import constants; print(f'Earth μ = {constants.MU_EARTH} km³/s²')"
+```
+
+## Project Structure
+
+```
+hale-orbital-mechanics/
+├── PROMPT.md                 # Ralph loop driver
+├── IMPLEMENTATION_PLAN.md    # Progress tracker
+├── CLAUDE.md                 # Implementation guidance
+├── specs/                    # Technical specifications
+│   ├── 00-overview.md
+│   ├── 01-constants.md
+│   ├── 02-two-body.md
+│   ├── 03-orbital-elements.md
+│   ├── 04-time-equations.md
+│   ├── 05-lambert.md
+│   ├── 06-maneuvers.md
+│   ├── 07-interplanetary.md
+│   └── 08-validation.md
+├── src/
+│   └── hale/
+│       ├── __init__.py
+│       ├── constants.py      # Physical constants (Appendix B)
+│       ├── twobody.py        # Two-body problem (Ch 2)
+│       ├── elements.py       # Orbital elements (Ch 3-4)
+│       ├── kepler.py         # Kepler's equation (Ch 4)
+│       ├── lambert.py        # Lambert problem (Ch 5)
+│       ├── maneuvers.py      # Orbital maneuvers (Ch 6)
+│       ├── interplanetary.py # Patched conics (Ch 7-8)
+│       └── utils.py          # Helper functions
+├── tests/
+│   └── test_*.py
+└── requirements.txt
+```
+
+## Coverage
+
+| Hale Chapter | Module | Status |
+|--------------|--------|--------|
+| Appendix B | constants.py | ⬜ |
+| Chapter 2 | twobody.py | ⬜ |
+| Chapter 3 | elements.py | ⬜ |
+| Chapter 4 | kepler.py | ⬜ |
+| Chapter 5 | lambert.py | ⬜ |
+| Chapter 6 | maneuvers.py | ⬜ |
+| Chapter 7-8 | interplanetary.py | ⬜ |
+
+## Validation
+
+All implementations validated against:
+- Hale textbook worked examples
+- Vallado's *Fundamentals of Astrodynamics* cross-checks
+- JPL Horizons ephemeris data
+- Apollo mission parameters
+
+## References
+
+- Hale, F.J. (1994). *Introduction to Space Flight*. Prentice Hall.
+- Vallado, D.A. (2013). *Fundamentals of Astrodynamics and Applications*. 4th ed.
+- Curtis, H.D. (2020). *Orbital Mechanics for Engineering Students*. 4th ed.

@@ -1,0 +1,28 @@
+name        = "hale_orbital"
+description = "Ada 2012 / SPARK astrodynamics library (Hale, Vallado)"
+version     = "0.2.0-dev"
+
+authors     = ["Timothy Hennessey", "HALE contributors"]
+maintainers = ["timothyehennessey@gmail.com"]
+maintainers-logins = []
+
+licenses = "Apache-2.0"
+website  = "https://github.com/THOClabs/hale-orbital-mechanics"
+
+tags = [
+   "astrodynamics",
+   "spacecraft",
+   "spark",
+   "ada2012",
+   "cr3bp",
+   "kepler",
+   "lambert",
+]
+
+project-files = ["ada/hale_orbital.gpr"]
+
+[gpr-externals]
+BUILD_MODE = ["debug", "release"]
+
+[gpr-set-externals]
+BUILD_MODE = "debug"

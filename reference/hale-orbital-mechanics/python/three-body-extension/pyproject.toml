@@ -1,0 +1,50 @@
+# Package metadata and tooling configuration for the CR3BP oracle.
+# The package is used in-place (tests and validation/generate_reference.py
+# insert src/ on sys.path); no build backend is required.
+
+[project]
+name = "threebody"
+version = "0.1.0"
+description = "NumPy/SciPy CR3BP oracle for cross-validating the HALE Ada orbital mechanics library"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.20",
+    "scipy>=1.7",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Slow end-to-end solver runs are opt-in: `python3 -m pytest -m slow`.
+addopts = "-m 'not slow'"
+markers = [
+    "slow: long-running differential-correction / continuation runs (minutes)",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.ruff.lint.per-file-ignores]
+# Pre-existing oracle modules and tests predate this lint config; they are
+# exempted from the exact rules they currently violate rather than restyled.
+"src/threebody/__init__.py" = ["I001"]
+"src/threebody/cr3bp.py" = ["F401", "I001"]
+"src/threebody/integrators.py" = ["I001"]
+"src/threebody/lagrange.py" = ["I001"]
+"src/threebody/periodic.py" = ["F401", "F841", "I001"]
+"src/threebody/stability.py" = ["F401", "I001"]
+"src/threebody/systems.py" = ["F401", "I001"]
+"tests/conftest.py" = ["I001"]
+"tests/test_cr3bp.py" = ["F401", "I001"]
+"tests/test_integrators.py" = ["F401", "I001"]
+"tests/test_lagrange.py" = ["E501", "F401", "I001"]
