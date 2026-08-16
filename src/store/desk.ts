@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { CATALOG } from "@/hale/catalog";
+import { COMMISSIONS } from "@/hale/commissions";
 import { runReviewRoom, type ReviewNote } from "@/hale/reviews";
 import { runScenario } from "@/hale/scenarios";
 import { slateForRound } from "@/hale/slate";
@@ -31,7 +32,12 @@ export const useDesk = create<DeskState>()(
       reviews: [],
       running: false,
       approved: {},
-      liked: {},
+      liked: Object.fromEntries(
+        COMMISSIONS.map((c) => [
+          c.productionId,
+          { at: c.likedAt, clipCount: c.clipCount, minutes: c.minutes },
+        ]),
+      ),
       select: (id) => set({ selectedId: id, result: null, reviews: [] }),
       runSelected: () => {
         const id = get().selectedId;

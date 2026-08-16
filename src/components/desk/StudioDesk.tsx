@@ -3,10 +3,12 @@ import { signIn } from "@/lib/auth/client";
 import { CATALOG, FAMILY_LABEL } from "@/hale/catalog";
 import { GATE_ORDER } from "@/hale/types";
 import { isRunnable, slateForRound } from "@/hale/slate";
+import { commissionFor } from "@/hale/commissions";
 import { xComposeUrl, xProfileUrl } from "@/hale/x-compose";
 import { useDesk } from "@/store/desk";
 import { Button } from "@/components/ui/button";
 import { OrbitPlot } from "./OrbitPlot";
+import { FilmReel } from "./FilmReel";
 import { cn } from "@/lib/utils";
 import { Check, Circle, Lock, Play, X as XIcon, Clapperboard } from "lucide-react";
 
@@ -18,8 +20,9 @@ export function StudioDesk() {
   const production = CATALOG.find((p) => p.id === selectedId) ?? CATALOG[0]!;
   const runnable = isRunnable(production);
   const done = Boolean(approved[production.id]);
-  const weLike = Boolean(liked[production.id]);
+  const weLike = Boolean(liked[production.id] || commissionFor(production.id));
   const reviewPass = result?.gates.find((g) => g.id === "REVIEW")?.status === "pass";
+  const commission = commissionFor(production.id);
 
   return (
     <div className="flex min-h-dvh flex-col bg-bg text-fg">
@@ -168,6 +171,8 @@ export function StudioDesk() {
             />
           </div>
 
+          <FilmReel productionId={production.id} />
+
           <div className="desk-scroll max-h-56 overflow-auto border-t border-line">
             <table className="w-full text-left text-sm">
               <thead className="sticky top-0 bg-surface font-mono text-[11px] uppercase tracking-wider text-muted">
@@ -286,7 +291,7 @@ export function StudioDesk() {
                 >
                   <Clapperboard className="h-4 w-4" />
                   {weLike
-                    ? `Held — ${liked[production.id]?.minutes} min 4K, waiting on us`
+                    ? `Held — ${liked[production.id]?.minutes ?? commission?.minutes} min 4K · next clip ${commission?.nextClip ?? "—"}`
                     : "We like this — hold for 4K"}
                 </Button>
                 {weLike && (
