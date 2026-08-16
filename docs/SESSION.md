@@ -122,7 +122,21 @@ Shipped **Ten Percent** 2:00 4K:
 - Theia grows from a seed to 0.1 M⊕ across eight shots
 - House plays Ep 01 and Ep 02
 
-Next: Episode 3 The Unseating.
+## Session 9 — 2026-08-16
+
+Steer: continue as many as possible, full gauntlet process, great quality.
+
+Shipped four more 2:00 4K films from passed scripts:
+
+| Ep | Title | Driver |
+| --- | --- | --- |
+| 03 | The Unseating | RK4 off L4, ΔC = 0 |
+| 04 | Hill’s Door | 0.0100 AU, Theia crosses |
+| 05 | v∞ | hyperbola, ≤ 4 km/s, ε = 8 |
+| 06 | Nine Point Three | v_imp 9.47 / 10.28 km/s |
+
+House plays Ep 01–06. Next: 07–12.
+
 
 
 
