@@ -50,6 +50,20 @@ Shipped:
 - Desk film reel under the Hohmann plot
 - Commission ledger: `src/hale/commissions.ts`
 
-Next: unique shots 3–6 (transfer coast) or continue Kepler. User says continue.
+## Session 4 — 2026-08-16
+
+Steer: behind-the-scenes Hale sim feeds Imagine; 2-minute sequenced film;
+one clip at a time; a new platform that is not the desk — just watch + post to X.
+
+Shipped:
+
+- **House** at `/` — editorial screening room (Newsreader / Figtree, ink, not brass)
+- Desk moved to `/desk`
+- 2:00 Climb written from the Hohmann ellipse: 8 stations, Earth disk 146° → 17°
+- Clip 3 *The coast begins* (ν 25°, r 6957 km, v 9.913 km/s)
+- Post to X from House
+
+Next: clip 4 Midcourse (Earth 87°) on continue.
+
 
 

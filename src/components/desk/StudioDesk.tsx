@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { SignedIn, SignedOut, UserButton } from "@/lib/auth/gates";
 import { signIn } from "@/lib/auth/client";
 import { CATALOG, FAMILY_LABEL } from "@/hale/catalog";
@@ -28,7 +29,10 @@ export function StudioDesk() {
     <div className="flex min-h-dvh flex-col bg-bg text-fg">
       <header className="flex items-center justify-between gap-6 border-b border-line px-5 py-3">
         <div className="flex items-baseline gap-4">
-          <h1 className="font-sans text-lg font-semibold tracking-tight">HaleGrok</h1>
+          <Link to="/" className="text-sm text-muted hover:text-fg">
+            House
+          </Link>
+          <h1 className="font-sans text-lg font-semibold tracking-tight">Desk</h1>
           <p className="hidden text-sm text-muted md:block">
             Code sim → we both like it → long 4K → Approve → X
           </p>

@@ -12,11 +12,10 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "HaleGrok — sim desk" },
+      { title: "HaleGrok House" },
       {
         name: "description",
-        content:
-          "Hale orbital mechanics simulations write the storyboard. You approve the post to X.",
+        content: "Two-minute films written by Hale orbital mechanics. Watch, then post to X.",
       },
       { property: "og:title", content: "HaleGrok" },
       {
