@@ -87,6 +87,23 @@ function killDiagram(id: string, title: string, src: string, why: string): Revie
 }
 
 export function reviewCatalog(): ReviewResult[] {
+  const night = cinema(
+    {
+      id: "l2-night",
+      title: "The night that never ends",
+      kind: "video",
+      src: "/films/016/the-night-that-never-ends.mp4",
+      poster: "/films/016/poster.jpg",
+      tweet: "L2. 1.50 million km behind Earth. The night that never ends. #HaleGrok",
+      family: "l2",
+    },
+    [9.4, "Sun–Earth L2 1 501 532 km · 0.0100 AU · C = 3.000887"],
+    [9.6, "Three minutes. You do not look away."],
+    [9.3, "Twelve shots. Glare, grain, behind, night, hold."],
+    [9.7, "The night does not end."],
+    [9.6, "Photoreal IMAX. The still they sent. No mesh."],
+    [9.5, "A 3-minute origin of a place."],
+  );
   const climb01 = cinema(
     {
       id: "climb-01",
@@ -271,7 +288,7 @@ export function reviewCatalog(): ReviewResult[] {
   ];
 
   void HOLLYWOOD;
-  return [climb01, climb01s, climb02, climb02s, climb03, climb03s, far01, far03, far05, far06, ...killed];
+  return [night, climb01, climb01s, climb02, climb02s, climb03, climb03s, far01, far03, far05, far06, ...killed];
 }
 
 export function shortlist(): ReviewResult[] {
