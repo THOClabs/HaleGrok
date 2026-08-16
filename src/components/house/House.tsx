@@ -1,35 +1,47 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { HOUSE_FILM, houseTweet } from "@/hale/house-film";
+import { HOW_FAR, howFarTweet } from "@/hale/how-far";
 import { xComposeUrl } from "@/hale/x-compose";
 import { Button } from "@/components/ui/button";
 
+const CYCLE_MS = 8000;
+
 export function House() {
-  const shots = HOUSE_FILM.shots;
-  const arrived = useMemo(() => shots.filter((s) => s.file), [shots]);
+  const shots = HOW_FAR.shots;
+  const playable = useMemo(
+    () => shots.filter((s) => s.file || s.still || s.wire),
+    [shots],
+  );
   const [on, setOn] = useState(0);
+  const [vidOk, setVidOk] = useState(true);
   const video = useRef<HTMLVideoElement>(null);
-  const current = arrived[on] ?? arrived[0];
+  const current = playable[on] ?? playable[0];
 
   useEffect(() => {
+    setVidOk(true);
     const el = video.current;
     if (!el || !current?.file) return;
     el.load();
     void el.play().catch(() => undefined);
-  }, [current?.file]);
+  }, [current?.file, on]);
 
-  function next() {
-    if (arrived.length < 2) return;
-    setOn((i) => (i + 1) % arrived.length);
-  }
+  useEffect(() => {
+    if (playable.length < 2) return;
+    const id = window.setInterval(() => {
+      setOn((i) => (i + 1) % playable.length);
+    }, CYCLE_MS);
+    return () => window.clearInterval(id);
+  }, [playable.length]);
 
   if (!current) {
     return (
       <div className="grid min-h-dvh place-items-center bg-house px-6 text-house-fg">
-        <p className="font-house text-house-mute">No pictures yet.</p>
+        <p className="font-house text-house-mute">The next picture is still in the sim.</p>
       </div>
     );
   }
+
+  const showVideo = Boolean(current.file) && vidOk;
 
   return (
     <div className="flex min-h-dvh flex-col bg-house text-house-fg">
@@ -39,70 +51,74 @@ export function House() {
             HaleGrok House
           </p>
           <h1 className="font-display text-3xl font-medium tracking-tight md:text-4xl">
-            {HOUSE_FILM.title}
+            {HOW_FAR.title}
           </h1>
         </div>
-        <div className="flex items-center gap-3">
-          <Button
-            className="bg-house-mark text-house hover:bg-house-fg"
-            onClick={() => window.open(xComposeUrl(houseTweet()), "_blank", "noopener,noreferrer")}
-          >
-            Post to X
-          </Button>
-        </div>
+        <Button
+          className="bg-house-mark text-house hover:bg-house-fg"
+          onClick={() => window.open(xComposeUrl(howFarTweet()), "_blank", "noopener,noreferrer")}
+        >
+          Post to X
+        </Button>
       </header>
 
       <main className="flex flex-1 flex-col px-3 pb-4 md:px-8">
-        <div className="overflow-hidden rounded-xl bg-house">
-          <video
-            ref={video}
-            key={current.file}
-            className="aspect-video w-full bg-house object-cover"
-            src={current.file}
-            poster={current.still}
-            controls
-            playsInline
-            onEnded={next}
-          />
+        <div className="overflow-hidden rounded-xl bg-house-elev">
+          {showVideo ? (
+            <video
+              ref={video}
+              key={current.file}
+              className="aspect-video w-full bg-house object-cover"
+              src={current.file}
+              poster={current.still ?? current.wire}
+              playsInline
+              muted
+              autoPlay
+              onError={() => setVidOk(false)}
+            />
+          ) : (
+            <img
+              src={current.still ?? current.wire}
+              alt={current.title}
+              className="aspect-video w-full bg-house object-cover"
+            />
+          )}
         </div>
 
         <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
-          <div className="max-w-xl">
+          <div className="max-w-2xl">
             <p className="font-house text-xs tracking-[0.18em] text-house-mute uppercase">
-              {current.tStart} · clip {current.index} of {HOUSE_FILM.total}
+              {current.tStart} · {current.index} / {HOW_FAR.total} · cycling
             </p>
             <h2 className="mt-1 font-display text-2xl">{current.title}</h2>
             <p className="mt-1 text-house-mute">{current.line}</p>
-            <p className="mt-2 font-mono text-xs text-house-mute">
-              ν {current.nuDeg.toFixed(1)}° · r {current.rKm.toFixed(0)} km · v{" "}
-              {current.vKms.toFixed(3)} km/s · Earth {current.earthDeg.toFixed(0)}°
-            </p>
+            <p className="mt-2 font-mono text-xs text-house-mute">{current.finding}</p>
           </div>
-          <p className="font-house text-sm text-house-mute">
-            {HOUSE_FILM.arrived} of {HOUSE_FILM.total} arrived · {HOUSE_FILM.runtime}
-          </p>
+          <p className="font-house text-sm text-house-mute">{HOW_FAR.runtime} documentary</p>
         </div>
 
         <ol className="mt-6 grid grid-cols-4 gap-2 md:grid-cols-8">
-          {shots.map((s, i) => {
-            const live = Boolean(s.file);
-            const active = live && arrived[on]?.index === s.index;
+          {shots.map((s) => {
+            const live = Boolean(s.file || s.still || s.wire);
+            const active = current.index === s.index;
             return (
               <li key={s.index}>
                 <button
                   type="button"
                   disabled={!live}
-                  onClick={() => setOn(arrived.findIndex((a) => a.index === s.index))}
+                  onClick={() => setOn(playable.findIndex((a) => a.index === s.index))}
                   className={[
-                    "flex min-h-16 w-full flex-col justify-between rounded-md border px-2 py-2 text-left",
-                    live ? "border-house-line bg-house-elev" : "border-house-line/50 opacity-40",
+                    "flex min-h-20 w-full flex-col overflow-hidden rounded-md border text-left",
+                    live ? "border-house-line bg-house-elev" : "border-house-line opacity-40",
                     active ? "border-house-mark" : "",
                   ].join(" ")}
                 >
-                  <span className="font-mono text-[10px] text-house-mute">{s.tStart}</span>
-                  <span className="font-house text-xs leading-tight">
-                    {live ? s.title : "—"}
-                  </span>
+                  <img
+                    src={s.still ?? s.wire}
+                    alt=""
+                    className="h-12 w-full object-cover"
+                  />
+                  <span className="px-2 py-1 font-house text-xs leading-tight">{s.title}</span>
                 </button>
               </li>
             );
@@ -111,7 +127,7 @@ export function House() {
       </main>
 
       <footer className="flex items-center justify-between px-5 py-4 text-xs text-house-mute md:px-8">
-        <p>{HOUSE_FILM.logline}</p>
+        <p>{HOW_FAR.logline}</p>
         <Link to="/desk" className="hover:text-house-fg">
           Desk
         </Link>

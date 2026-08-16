@@ -63,7 +63,24 @@ Shipped:
 - Clip 3 *The coast begins* (ν 25°, r 6957 km, v 9.913 km/s)
 - Post to X from House
 
-Next: clip 4 Midcourse (Earth 87°) on continue.
+## Session 5 — 2026-08-16
+
+Steer: leave the cabin. Large-scale Hale astronomy. Sims write wireframes
+and a dense 2-minute documentary. Cycle on screen.
+
+Shipped **How Far** (2:00, 8 × 15s), cycling on House:
+
+1. Two masses — Moon at 60.3 Earth radii
+2. Five points — Earth–Moon CR3BP, μ = 1.215e-2
+3. The saddle — L1, 326 000 km from Earth
+4. The triangles — L4/L5, 60°
+5. Leave the Moon — Sun–Earth L1, 1.49e6 km
+6. The night that never ends — SE L2
+7. Five astronomical units — Sun–Jupiter L4, 5.20 AU
+8. The cheap ellipse — Earth–Mars Hohmann, 258.9 days, Δv 5.59 km/s
+
+Next: another scale film (Hill spheres / forbidden regions) or S2 Kepler.
+
 
 
 
