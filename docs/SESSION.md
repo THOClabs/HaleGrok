@@ -111,7 +111,19 @@ Shipped **The Trojan Twin** 2:00 4K (3840×2160, 25 fps):
 - Master `/films/003/the-trojan-twin-4k.mp4` looping on House
 - Post to X drafts the L4 card
 
-Next: Episode 2 Ten Percent.
+## Session 8 — 2026-08-16
+
+Steer: continue the series.
+
+Shipped **Ten Percent** 2:00 4K:
+- μ_SE = 3.003e-6 (dust holds)
+- μ* = 0.03852 (Routh)
+- μ_Theia–Terra = 0.0909 (past the line)
+- Theia grows from a seed to 0.1 M⊕ across eight shots
+- House plays Ep 01 and Ep 02
+
+Next: Episode 3 The Unseating.
+
 
 
 

@@ -60,7 +60,8 @@ Each continue-round offers **six to ten films** (a slate), not one.
 - [x] S1e — How Far: 2:00 astronomy documentary from Hale CR3BP + Earth–Mars Hohmann. Eight clips cycling.
 - [x] S1f — Theia / Terra: 12-episode gauntlet suite. 12/12 Hale scripts pass. Imagine locked.
 - [x] S1g — Episode 1 The Trojan Twin: 2:00 4K master from the L4 gauntlet
-- [ ] S1h — Shoot Episode 2 Ten Percent (2:00 4K) from its gauntlet
+- [x] S1h — Episode 2 Ten Percent: 2:00 4K. Routh crossed. μ = 0.0909
+- [ ] S1i — Shoot Episode 3 The Unseating (2:00 4K)
 - [ ] S2 — Kepler elliptic/hyperbolic + universal propagation (Ada Kepler) — in progress
 - [ ] S3 — Production 021 Earth–Mars patched-conic (Ada earth_mars_mission)
 - [ ] S4 — Halo / Lyapunov differential correction (Ada Find_Halo_Orbit)
