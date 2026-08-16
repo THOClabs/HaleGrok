@@ -1,9 +1,10 @@
 import { MU_EARTH, R_EARTH, R_GEO } from "./constants";
 import { CATALOG, productionById } from "./catalog";
 import { allStepsOk, gate, lockedAfter } from "./gauntlet";
-import { sampleEllipse } from "./kepler";
+import { sampleEllipse, solveKeplerElliptic, stumpffC, stumpffS, meanFromE, trueAnomalyFromE } from "./kepler";
 import { hohmannTransfer } from "./maneuvers";
 import { compileImaginePrompt, compileTweet } from "./prompts";
+import { compileFilmPlan } from "./film";
 import { reviewPass, runReviewRoom } from "./reviews";
 import { isRunnable } from "./slate";
 import {
@@ -85,6 +86,7 @@ function finish(
 
   const imaginePrompt = compileImaginePrompt(production, telemetry, findings);
   const tweet = compileTweet(production, telemetry, headline);
+  const filmPlan = compileFilmPlan(production, findings, telemetry);
   const draft: ScenarioResult = {
     productionId: production.id,
     steps,
@@ -94,6 +96,7 @@ function finish(
     imaginePrompt,
     tweet,
     storyboard: production.storyboard,
+    filmPlan,
   };
 
   const reviews = runReviewRoom(production, draft);
@@ -117,8 +120,12 @@ function finish(
     gates.push(...lockedAfter(failed as GateResult["id"]));
   } else {
     gates.push(
-      gate("IMAGINE", "locked", "Imagine waits. Approve the prompt, then we ask for pictures."),
-      gate("ASSEMBLE", "locked", "No film until clips exist."),
+      gate(
+        "IMAGINE",
+        "locked",
+        `${filmPlan.runtimeLabel}. Locked until we both like the sim.`,
+      ),
+      gate("ASSEMBLE", "locked", `Stitch ${filmPlan.clipCount} clips into one ${filmPlan.resolution} picture.`),
       gate("APPROVE", "idle", "Your click. Opens a draft on @thenlaguna."),
       gate("RELEASE", "locked", "Not posted."),
     );
@@ -190,6 +197,23 @@ function runHohmann(production: Production): ScenarioResult {
       e_transfer: eT,
       e_geo: e2,
       energyResidual,
+    }),
+    step(
+      "kepler_midcourse",
+      "Hale_Orbital.Kepler.Solve_Kepler_Elliptic",
+      true,
+      "Mid-transfer: M → E → ν on the Hohmann ellipse.",
+      (() => {
+        const M = Math.PI / 2;
+        const E = solveKeplerElliptic(M, h.eTransfer);
+        const nu = trueAnomalyFromE(E, h.eTransfer);
+        const back = meanFromE(E, h.eTransfer);
+        return { M, E, nu, M_residual: back - M };
+      })(),
+    ),
+    step("stumpff_check", "Hale_Orbital.Stumpff.C / S", Math.abs(stumpffC(0) - 0.5) < 1e-12, "C(0)=1/2, S(0)=1/6.", {
+      C0: stumpffC(0),
+      S0: stumpffS(0),
     }),
     step(
       "oracle_hale_ch6",

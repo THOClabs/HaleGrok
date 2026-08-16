@@ -26,4 +26,18 @@ Steer applied:
 - Desktop Chrome / Mac Mini
 - Establish GitHub, regularly push, squash-merge to main
 
-Next: **S2 — Kepler elliptic/hyperbolic + universal / Stumpff**
+## Session 2 — 2026-08-16
+
+Steer: sims first; a very long 4K film is something we do together after we
+like a run. Not automatic.
+
+Shipped:
+
+- Film planner: flagships are 12 min 4K (48 × 15s clips); others 8 min
+- Desk handshake: **We like this — hold for 4K**. Imagine stays locked
+- Kepler deepened: elliptic, hyperbolic, parabolic, Stumpff C/S (Ada)
+- The Climb now runs mid-transfer Kepler + Stumpff as extra sim steps
+
+Next: finish S2 universal variable / Laguerre; or shoot clip 1 of a liked film
+when the user says they like one.
+

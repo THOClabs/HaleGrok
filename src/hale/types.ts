@@ -110,6 +110,15 @@ export type ScenarioResult = {
   imaginePrompt: string;
   tweet: string;
   storyboard: Storyboard;
+  filmPlan?: {
+    resolution: string;
+    aspect: string;
+    targetMinutes: number;
+    clipSeconds: number;
+    clipCount: number;
+    runtimeLabel: string;
+    handshake: string;
+  };
 };
 
 export const X_HANDLE = "thenlaguna";
