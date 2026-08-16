@@ -8,16 +8,18 @@ import { useDesk } from "@/store/desk";
 import { Button } from "@/components/ui/button";
 import { OrbitPlot } from "./OrbitPlot";
 import { cn } from "@/lib/utils";
-import { Check, Circle, Lock, Play, X as XIcon } from "lucide-react";
+import { Check, Circle, Lock, Play, X as XIcon, Clapperboard } from "lucide-react";
 
 const SLATE = slateForRound(1);
 
 export function StudioDesk() {
-  const { selectedId, select, runSelected, result, reviews, running, approved, approve } =
+  const { selectedId, select, runSelected, result, reviews, running, approved, approve, liked, likeThis } =
     useDesk();
   const production = CATALOG.find((p) => p.id === selectedId) ?? CATALOG[0]!;
   const runnable = isRunnable(production);
   const done = Boolean(approved[production.id]);
+  const weLike = Boolean(liked[production.id]);
+  const reviewPass = result?.gates.find((g) => g.id === "REVIEW")?.status === "pass";
 
   return (
     <div className="flex min-h-dvh flex-col bg-bg text-fg">
@@ -25,7 +27,7 @@ export function StudioDesk() {
         <div className="flex items-baseline gap-4">
           <h1 className="font-sans text-lg font-semibold tracking-tight">HaleGrok</h1>
           <p className="hidden text-sm text-muted md:block">
-            Code sim → storyboard → review room → Approve → X
+            Code sim → we both like it → long 4K → Approve → X
           </p>
         </div>
         <div className="flex items-center gap-4">
@@ -57,8 +59,8 @@ export function StudioDesk() {
             <h2 className="text-xl font-medium tracking-tight">This week’s offering</h2>
           </div>
           <p className="max-w-md text-right text-sm text-muted">
-            Each card is a scripted Hale run. Video is not a mood board — it is born from the
-            numbers after four reviewers sign.
+            Each card is a Hale script. We watch the numbers. If we both like
+            the sim, we commission a long 4K film — clip by clip, together.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-2 md:grid-cols-4 xl:grid-cols-8">
@@ -264,6 +266,41 @@ export function StudioDesk() {
                   </li>
                 ))}
               </ul>
+            )}
+          </Block>
+
+          <Block title="Long 4K">
+            {result?.filmPlan ? (
+              <>
+                <p className="font-mono text-sm text-accent">{result.filmPlan.runtimeLabel}</p>
+                <p className="mt-2 text-sm text-muted">{result.filmPlan.handshake}</p>
+                <p className="mt-2 text-xs text-faint">
+                  Imagine only makes ~15s at a time. A long picture is {result.filmPlan.clipCount}{" "}
+                  clips stitched. We do not press that button until the sim is one we like.
+                </p>
+                <Button
+                  className="mt-3 w-full"
+                  variant={weLike ? "outline" : "default"}
+                  disabled={!reviewPass || weLike}
+                  onClick={() => likeThis(production.id)}
+                >
+                  <Clapperboard className="h-4 w-4" />
+                  {weLike
+                    ? `Held — ${liked[production.id]?.minutes} min 4K, waiting on us`
+                    : "We like this — hold for 4K"}
+                </Button>
+                {weLike && (
+                  <p className="mt-2 text-sm text-pass">
+                    Handshake locked. Next continue we shoot clip 1 of{" "}
+                    {liked[production.id]?.clipCount}. Nothing has been generated.
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-muted">
+                Run the Hale script. The 4K plan is written from the findings, then we decide
+                together.
+              </p>
             )}
           </Block>
 
