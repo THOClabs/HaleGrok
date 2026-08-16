@@ -5,15 +5,15 @@ import { xComposeUrl } from "@/hale/x-compose";
 import { Button } from "@/components/ui/button";
 import { GATE_ORDER } from "@/hale/types";
 import { TheiaPlayer } from "@/components/house/TheiaPlayer";
-import { TenPercentFilm } from "@/components/house/TenPercentFilm";
-import { EP02 } from "@/hale/theia/ep02-film";
+import { HaleStage } from "@/components/house/HaleStage";
+import { SERIES_FILMS } from "@/hale/theia/films";
 
 const RESULTS: EpisodeResult[] = runTheiaSeries();
 
 function tweet(): string {
   return [
-    `Ten Percent — 2:00 · 4K.`,
-    `Routh μ* = 0.03852. Theia/Terra μ = 0.0909. The triangle is no longer dust.`,
+    `Theia / Terra — Ep 03–06 now 4K.`,
+    `Unseating, Hill’s Door, v∞, Nine Point Three.`,
     `Hale. #HaleGrok`,
   ].join("\n");
 }
@@ -40,7 +40,7 @@ export function TheiaSeries() {
             Theia / Terra
           </h1>
           <p className="mt-1 text-sm text-house-mute">
-            {passed}/12 gauntlets · now playing {EP02.title} · {EP02.delivery}
+            {passed}/12 gauntlets · four new 4K cuts · Unseating → contact
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -63,7 +63,7 @@ export function TheiaSeries() {
             Live Hale instrument — same L4 numbers
           </summary>
           <div className="mt-3">
-            <TenPercentFilm />
+            <HaleStage film={SERIES_FILMS[0]!} />
           </div>
         </details>
 

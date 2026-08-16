@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { EP01, EP01_SHOTS } from "@/hale/theia/ep01-film";
 import { EP02, EP02_SHOTS } from "@/hale/theia/ep02-film";
+import { SERIES_FILMS } from "@/hale/theia/films";
 
 const FILMS = [
   {
@@ -17,11 +18,18 @@ const FILMS = [
     shots: EP02_SHOTS,
     delivery: EP02.delivery,
   },
-] as const;
+  ...SERIES_FILMS.map((f) => ({
+    id: f.slug,
+    title: f.title,
+    master: f.master,
+    shots: f.shots,
+    delivery: "4K UHD 3840×2160",
+  })),
+];
 
-export function TheiaPlayer({ initial = 1 }: { initial?: number }) {
+export function TheiaPlayer({ initial }: { initial?: number }) {
   const video = useRef<HTMLVideoElement>(null);
-  const [filmI, setFilmI] = useState(initial);
+  const [filmI, setFilmI] = useState(initial ?? FILMS.length - 1);
   const [on, setOn] = useState(0);
   const film = FILMS[filmI]!;
 
@@ -63,7 +71,7 @@ export function TheiaPlayer({ initial = 1 }: { initial?: number }) {
           <p className="font-mono text-xs text-house-mute">{film.shots[on]?.finding}</p>
         </div>
       </div>
-      <div className="mt-3 flex gap-2">
+      <div className="mt-3 flex flex-wrap gap-2">
         {FILMS.map((f, i) => (
           <button
             key={f.id}
