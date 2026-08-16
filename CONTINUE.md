@@ -55,12 +55,13 @@ Each continue-round offers **six to ten films** (a slate), not one.
 
 - [x] S1 — Desk shell, Hale TS core, CR3BP, 8-film slate, review room, Approve→X
 - [x] S1b — Long 4K handshake: sim first, we both like it, then commission (no auto Imagine)
-- [ ] S2 — Kepler elliptic/hyperbolic + universal propagation (Ada Kepler) — in progress (elliptic, hyperbolic, parabolic, Stumpff landed)
+- [x] S1c — The Climb commissioned. Opening reel: clips 1–2 (gloves, first burn)
+- [ ] S2 — Kepler elliptic/hyperbolic + universal propagation (Ada Kepler) — in progress
 - [ ] S3 — Production 021 Earth–Mars patched-conic (Ada earth_mars_mission)
 - [ ] S4 — Halo / Lyapunov differential correction (Ada Find_Halo_Orbit)
-- [ ] S5 — Shot-list compiler: telemetry → multi-shot Imagine prompts
-- [ ] S6 — Imagine request pipeline (signed-in, capped, persisted) — only for liked films
-- [ ] S7 — First assembled long 4K (The Climb or whichever we liked)
+- [ ] S5 — Unique remaining 46 Climb shots from Hohmann samples (no looping beats)
+- [ ] S6 — Imagine request pipeline (signed-in, capped) — only for liked films
+- [ ] S7 — Assemble The Climb 12-min 4K
 - [ ] S8 — Lambert intercept (Ada lambert_intercept)
 - [ ] S9 — Bi-elliptic, plane change, phasing (Ada maneuvers)
 - [ ] S10 — Next 8-film slate through REVIEW
