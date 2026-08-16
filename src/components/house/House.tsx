@@ -128,9 +128,9 @@ export function House() {
 
       <footer className="flex items-center justify-between px-5 py-4 text-xs text-house-mute md:px-8">
         <p>{HOW_FAR.logline}</p>
-        <Link to="/desk" className="hover:text-house-fg">
-          Desk
-        </Link>
+          <Link to="/" className="hover:text-house-fg">
+            Theia / Terra
+          </Link>
       </footer>
     </div>
   );

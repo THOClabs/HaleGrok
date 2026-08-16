@@ -79,7 +79,30 @@ Shipped **How Far** (2:00, 8 × 15s), cycling on House:
 7. Five astronomical units — Sun–Jupiter L4, 5.20 AU
 8. The cheap ellipse — Earth–Mars Hohmann, 258.9 days, Δv 5.59 km/s
 
-Next: another scale film (Hill spheres / forbidden regions) or S2 Kepler.
+## Session 6 — 2026-08-16
+
+Steer: start deeply with gauntlets to drive all Theia work.
+
+Shipped 12-episode **Theia / Terra** suite. Every episode has a Hale script,
+conservation, oracle, and 8 beats. 12/12 pass. Imagine is locked.
+
+| Ep | Title | Driver |
+| --- | --- | --- |
+| 01 | The Trojan Twin | Sun–Terra L4, 60°, shared year |
+| 02 | Ten Percent | Routh vs Theia/Terra μ = 0.091 |
+| 03 | The Unseating | RK4 off L4, Jacobi |
+| 04 | Hill’s Door | Terra Hill 0.0100 AU |
+| 05 | v∞ | ≤ 4 km/s |
+| 06 | Nine Point Three | v_imp(0) = 9.47 km/s |
+| 07 | Forty-Five Degrees | h = r v sin θ |
+| 08 | Iron Sinks | scope-honest energy only |
+| 09 | Roche | 2.88 R⊕ fluid |
+| 10 | Hours or Years | T(3R⊕) hours, SPH labeled |
+| 11 | A Five-Hour Terra | 5 h day, lunar month 27.28 d |
+| 12 | Luna | EM CR3BP, 60.3 R⊕ |
+
+Next: shoot Episode 1 from the L4 findings only.
+
 
 
 
