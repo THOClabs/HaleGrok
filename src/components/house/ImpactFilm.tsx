@@ -1,9 +1,15 @@
-import { useEffect, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Stars } from "@react-three/drei";
+import { Bloom, EffectComposer, Vignette } from "@react-three/postprocessing";
+import { Suspense, useMemo, useRef } from "react";
+import * as THREE from "three";
+import { IMPACT } from "@/hale/theia/impact-gauntlet";
 
-const DURATION = 40;
-const RE = 6378;
-const RT = 3396;
-const CONTACT = 12;
+const RE = 6.378;
+const RT = 3.396;
+const CONTACT_R = IMPACT.rContact / 1000;
+const HIT = IMPACT.contactAt;
+const LEN = IMPACT.duration;
 
 function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
@@ -12,209 +18,180 @@ function smooth(t: number) {
   const x = Math.max(0, Math.min(1, t));
   return x * x * (3 - 2 * x);
 }
-function hash(i: number) {
-  const x = Math.sin(i * 127.1 + 311.7) * 43758.5453;
-  return x - Math.floor(x);
+
+function useClock(startAt: number) {
+  return (elapsed: number) => (((elapsed + startAt) % LEN) + LEN) % LEN;
 }
 
-type Cam = { x: number; y: number; z: number };
+function World({ startAt }: { startAt: number }) {
+  const clock = useClock(startAt);
+  const terra = useRef<THREE.Mesh>(null);
+  const theia = useRef<THREE.Mesh>(null);
+  const flash = useRef<THREE.PointLight>(null);
+  const debris = useRef<THREE.InstancedMesh>(null);
+  const luna = useRef<THREE.Mesh>(null);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const earthMap = useMemo(() => new THREE.TextureLoader().load("/textures/proto-earth.jpg"), []);
+  const earthN = useMemo(() => new THREE.TextureLoader().load("/textures/earth-normal.jpg"), []);
+  const marsMap = useMemo(() => new THREE.TextureLoader().load("/textures/mars.jpg"), []);
+  const moonMap = useMemo(() => new THREE.TextureLoader().load("/textures/moon.jpg"), []);
+  earthMap.colorSpace = THREE.SRGBColorSpace;
+  marsMap.colorSpace = THREE.SRGBColorSpace;
+  moonMap.colorSpace = THREE.SRGBColorSpace;
 
-function camera(t: number): Cam {
-  if (t < 12) {
-    const u = smooth(t / 12);
-    return { x: lerp(8000, 2500, u), y: lerp(6000, 2800, u), z: lerp(52000, 20000, u) };
-  }
-  if (t < 18) {
-    const u = smooth((t - 12) / 6);
-    return { x: lerp(2500, 1800, u), y: lerp(2800, 1600, u), z: lerp(20000, 16000, u) };
-  }
-  if (t < 28) {
-    const u = smooth((t - 18) / 10);
-    return { x: lerp(1800, 4000, u), y: lerp(1600, 2500, u), z: lerp(16000, 42000, u) };
-  }
-  const u = smooth((t - 28) / 12);
-  return { x: lerp(4000, 12000, u), y: lerp(2500, 4000, u), z: lerp(42000, 88000, u) };
+  const bits = useMemo(() => {
+    const n = 1400;
+    const a0 = new Float32Array(n);
+    const r0 = new Float32Array(n);
+    const vr = new Float32Array(n);
+    const va = new Float32Array(n);
+    const s = new Float32Array(n);
+    const yk = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const h = Math.sin(i * 127.1 + 11.7) * 43758.5453;
+      const u = h - Math.floor(h);
+      const h2 = Math.sin(i * 91.7 + 3.1) * 23421.1;
+      const u2 = h2 - Math.floor(h2);
+      a0[i] = Math.PI / 4 + (u - 0.5) * 1.7;
+      r0[i] = RE * (0.92 + u2 * 0.3);
+      vr[i] = 2.8 + u * 11;
+      va[i] = 0.08 + u2 * 0.28;
+      s[i] = 0.04 + u * 0.22;
+      yk[i] = (u2 - 0.5) * 0.55;
+    }
+    return { n, a0, r0, vr, va, s, yk };
+  }, []);
+
+  useFrame((state) => {
+    const t = clock(state.clock.elapsedTime);
+    const u = smooth(Math.min(1, t / HIT));
+    const dist = lerp(28, CONTACT_R, u);
+    const ang = Math.PI / 4;
+    const tx = Math.cos(ang) * dist;
+    const tz = Math.sin(ang) * dist;
+
+    if (theia.current) {
+      const alive = t < HIT + 0.45;
+      theia.current.visible = alive;
+      theia.current.position.set(tx, 0.35, tz);
+      theia.current.rotation.y = t * 0.12;
+      const crush = t < HIT ? 1 : Math.max(0.15, 1 - (t - HIT) * 2.2);
+      theia.current.scale.setScalar(crush);
+    }
+    if (terra.current) {
+      terra.current.rotation.y = t * 0.04;
+      const mat = terra.current.material as THREE.MeshStandardMaterial;
+      const melt = smooth(Math.min(1, Math.max(0, t - HIT) / 3));
+      mat.emissive = new THREE.Color().setRGB(0.55 * melt, 0.16 * melt, 0.03 * melt);
+      mat.emissiveIntensity = 0.15 + melt * 1.6;
+      mat.roughness = 0.62 - melt * 0.2;
+    }
+    if (flash.current) {
+      const hit = Math.max(0, t - HIT);
+      flash.current.intensity = hit > 0 && hit < 3 ? 180 * Math.exp(-hit * 1.8) : 0;
+      flash.current.position.set(Math.cos(ang) * RE * 0.7, 0.4, Math.sin(ang) * RE * 0.7);
+    }
+    if (debris.current) {
+      const age = Math.max(0, t - HIT);
+      debris.current.visible = age > 0.02;
+      for (let i = 0; i < bits.n; i++) {
+        const r = bits.r0[i]! + bits.vr[i]! * age * 1.15;
+        const a = bits.a0[i]! + bits.va[i]! * age;
+        dummy.position.set(Math.cos(a) * r, bits.yk[i]! * r * 0.35, Math.sin(a) * r);
+        dummy.rotation.set(a, age * 2, a * 0.4);
+        dummy.scale.setScalar(bits.s[i]! * (age < 0.4 ? age / 0.4 : 1));
+        dummy.updateMatrix();
+        debris.current.setMatrixAt(i, dummy.matrix);
+      }
+      debris.current.instanceMatrix.needsUpdate = true;
+    }
+    if (luna.current) {
+      const g = smooth((t - 26) / 10);
+      luna.current.visible = t > 26;
+      const lr = lerp(RE * 2.4, RE * 5.6, g);
+      const la = 0.55 + (t - 26) * 0.07;
+      luna.current.position.set(Math.cos(la) * lr, 0.6, Math.sin(la) * lr);
+      luna.current.scale.setScalar(lerp(0.12, 1.737, g));
+      luna.current.rotation.y = t * 0.08;
+    }
+
+    const cam = state.camera;
+    if (t < 12) {
+      const k = smooth(t / 12);
+      cam.position.set(lerp(16, 7.5, k), lerp(6.2, 3.4, k), lerp(26, 13, k));
+    } else if (t < 18) {
+      const k = smooth((t - 12) / 6);
+      const shake = Math.exp(-(t - 12) * 2.2) * Math.sin(t * 70) * 0.22;
+      cam.position.set(lerp(7.5, 6.2, k) + shake, lerp(3.4, 2.8, k), lerp(13, 11, k));
+    } else if (t < 28) {
+      const k = smooth((t - 18) / 10);
+      cam.position.set(lerp(6.2, 14, k), lerp(2.8, 7.5, k), lerp(11, 28, k));
+    } else {
+      const k = smooth((t - 28) / 12);
+      cam.position.set(lerp(14, 28, k), lerp(7.5, 13, k), lerp(28, 52, k));
+    }
+    cam.lookAt(tx * 0.35, 0.15, tz * 0.35);
+  });
+
+  return (
+    <>
+      <color attach="background" args={["#03040a"]} />
+      <ambientLight intensity={0.07} />
+      <directionalLight position={[-80, 30, -20]} intensity={2.6} color="#fff4d6" />
+      <pointLight position={[-70, 24, -16]} intensity={40} color="#ffd7a0" distance={220} />
+      <pointLight ref={flash} color="#fff2c8" distance={80} decay={2} />
+      <Stars radius={400} depth={80} count={8000} factor={3.2} saturation={0} fade speed={0.15} />
+
+      <mesh ref={terra}>
+        <sphereGeometry args={[RE, 96, 96]} />
+        <meshStandardMaterial
+          map={earthMap}
+          normalMap={earthN}
+          roughness={0.58}
+          metalness={0.04}
+          emissive="#3a1408"
+          emissiveIntensity={0.12}
+        />
+      </mesh>
+      <mesh scale={1.045}>
+        <sphereGeometry args={[RE, 64, 64]} />
+        <meshBasicMaterial color="#7ec8ff" transparent opacity={0.09} side={THREE.BackSide} />
+      </mesh>
+
+      <mesh ref={theia}>
+        <sphereGeometry args={[RT, 80, 80]} />
+        <meshStandardMaterial map={marsMap} roughness={0.78} metalness={0.02} color="#c47a4a" />
+      </mesh>
+
+      <instancedMesh ref={debris} args={[undefined, undefined, bits.n]}>
+        <dodecahedronGeometry args={[1, 0]} />
+        <meshStandardMaterial color="#c48a58" roughness={0.7} emissive="#ff7a20" emissiveIntensity={0.45} />
+      </instancedMesh>
+
+      <mesh ref={luna}>
+        <sphereGeometry args={[1, 48, 48]} />
+        <meshStandardMaterial map={moonMap} roughness={0.9} emissive="#ffb070" emissiveIntensity={0.25} />
+      </mesh>
+
+      <EffectComposer>
+        <Bloom intensity={1.15} luminanceThreshold={0.22} luminanceSmoothing={0.3} mipmapBlur />
+        <Vignette eskil={false} offset={0.15} darkness={0.72} />
+      </EffectComposer>
+    </>
+  );
 }
 
 export function ImpactFilm({ startAt = 0 }: { startAt?: number }) {
-  const ref = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = ref.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: false });
-    if (!ctx) return;
-    let raf = 0;
-    const t0 = performance.now() - startAt * 1000;
-
-    const stars = Array.from({ length: 900 }, (_, i) => ({
-      a: hash(i) * Math.PI * 2,
-      r: 80 + hash(i + 2) * 1400,
-      s: 0.5 + hash(i + 5) * 1.4,
-      a0: 0.12 + hash(i + 8) * 0.75,
-    }));
-
-    const debris = Array.from({ length: 900 }, (_, i) => {
-      const cone = Math.PI / 4 + (hash(i) - 0.5) * 1.6;
-      return {
-        a0: cone,
-        r0: RE * (0.95 + hash(i + 1) * 0.25),
-        vr: 4 + hash(i + 4) * 14,
-        va: 0.15 + hash(i + 9) * 0.4,
-        size: 1.2 + hash(i + 11) * 3.8,
-        hot: hash(i + 13),
-        streak: 8 + hash(i + 17) * 22,
-      };
-    });
-
-    const fit = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(canvas.clientWidth * dpr);
-      canvas.height = Math.round(canvas.clientHeight * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    fit();
-    const ro = new ResizeObserver(fit);
-    ro.observe(canvas);
-
-    const sphere = (X: number, Y: number, R: number, mid: string, hi: string, melt: number) => {
-      const g = ctx.createRadialGradient(X - R * 0.35, Y - R * 0.35, R * 0.08, X, Y, R);
-      g.addColorStop(0, hi);
-      g.addColorStop(0.42, mid);
-      g.addColorStop(0.78, melt > 0.4 ? "#4a1c0c" : "#070605");
-      g.addColorStop(1, "#030201");
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(X, Y, Math.max(1, R), 0, Math.PI * 2);
-      ctx.fill();
-      if (melt > 0.15) {
-        const crack = ctx.createRadialGradient(X + R * 0.2, Y, 0, X, Y, R);
-        crack.addColorStop(0, `rgba(255,160,60,${0.18 + melt * 0.35})`);
-        crack.addColorStop(1, "rgba(255,80,10,0)");
-        ctx.fillStyle = crack;
-        ctx.beginPath();
-        ctx.arc(X, Y, R, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    };
-
-    const draw = (now: number) => {
-      const t = ((((now - t0) / 1000) % DURATION) + DURATION) % DURATION;
-      const w = canvas.clientWidth;
-      const h = canvas.clientHeight;
-      if (w < 2) {
-        raf = requestAnimationFrame(draw);
-        return;
-      }
-      const cam = camera(t);
-      const scale = Math.min(w, h) / cam.z;
-      const map = (x: number, y: number) => ({
-        X: w / 2 + (x - cam.x) * scale,
-        Y: h / 2 + (y - cam.y) * scale,
-      });
-
-      ctx.fillStyle = "#030308";
-      ctx.fillRect(0, 0, w, h);
-      const haze = ctx.createRadialGradient(w * 0.35, h * 0.4, 0, w * 0.4, h * 0.45, Math.max(w, h) * 0.7);
-      haze.addColorStop(0, "rgba(40,28,50,0.18)");
-      haze.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = haze;
-      ctx.fillRect(0, 0, w, h);
-
-      for (const st of stars) {
-        ctx.globalAlpha = st.a0;
-        ctx.fillStyle = "#f4f0e8";
-        ctx.fillRect(w / 2 + Math.cos(st.a) * st.r, h / 2 + Math.sin(st.a) * st.r * 0.62, st.s, st.s);
-      }
-      ctx.globalAlpha = 1;
-
-      const sunX = w * 0.12;
-      const sunY = h * 0.22;
-      const sunG = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 220);
-      sunG.addColorStop(0, "rgba(255,244,210,0.95)");
-      sunG.addColorStop(0.12, "rgba(255,190,80,0.35)");
-      sunG.addColorStop(1, "rgba(255,120,20,0)");
-      ctx.fillStyle = sunG;
-      ctx.beginPath();
-      ctx.arc(sunX, sunY, 220, 0, Math.PI * 2);
-      ctx.fill();
-
-      const hit = Math.max(0, t - CONTACT);
-      const melt = smooth(Math.min(1, hit / 4));
-      const terra = map(0, 0);
-      const terraR = RE * scale;
-
-      const uIn = Math.min(1, t / CONTACT);
-      const dist = lerp(42000, 9774, smooth(uIn));
-      const ang = Math.PI / 4;
-      const thx = Math.cos(ang) * dist;
-      const thy = Math.sin(ang) * dist;
-
-      if (t < CONTACT + 0.35) {
-        const Th = map(thx, thy);
-        sphere(Th.X, Th.Y, RT * scale, "#7a3f2a", "#e0b07a", t > CONTACT - 0.4 ? 0.6 : 0);
-      }
-
-      sphere(terra.X, terra.Y, terraR, melt > 0.3 ? "#6a3a28" : "#4f86b8", melt > 0.3 ? "#ffb060" : "#d7e8f8", melt);
-
-      if (hit > 0) {
-        const flash = Math.exp(-hit * 1.6);
-        ctx.fillStyle = `rgba(255,230,190,${flash * 0.72})`;
-        ctx.fillRect(0, 0, w, h);
-        const ring = map(Math.cos(ang) * RE * 0.7, Math.sin(ang) * RE * 0.7);
-        ctx.strokeStyle = `rgba(255,200,120,${0.55 * flash})`;
-        ctx.lineWidth = 3 + 10 * flash;
-        ctx.beginPath();
-        ctx.arc(ring.X, ring.Y, (2000 + hit * 9000) * scale, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-
-      if (hit > 0.05) {
-        const age = hit;
-        for (const d of debris) {
-          const r = d.r0 + d.vr * age * 1100;
-          const a = d.a0 + d.va * age * 0.18;
-          const p = map(Math.cos(a) * r, Math.sin(a) * r);
-          const fade = Math.min(1, age / 1.2) * (1 - Math.min(0.6, r / 110000));
-          ctx.globalAlpha = 0.2 + fade * 0.75;
-          ctx.strokeStyle = d.hot > 0.4 ? "#ffc070" : "#d4a078";
-          ctx.lineWidth = Math.max(1, d.size * scale * 80);
-          const back = map(Math.cos(a) * (r - d.streak * age * 80), Math.sin(a) * (r - d.streak * age * 80));
-          ctx.beginPath();
-          ctx.moveTo(back.X, back.Y);
-          ctx.lineTo(p.X, p.Y);
-          ctx.stroke();
-        }
-        ctx.globalAlpha = 1;
-
-        ctx.beginPath();
-        ctx.ellipse(terra.X, terra.Y, RE * 4.2 * scale, RE * 1.15 * scale, 0.35, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(255,170,80,${0.12 + 0.2 * Math.min(1, age / 8)})`;
-        ctx.stroke();
-      }
-
-      if (t > 26) {
-        const grow = smooth((t - 26) / 10);
-        const lr = lerp(RE * 2.2, RE * 5.4, grow);
-        const la = 0.4 + (t - 26) * 0.08;
-        const L = map(Math.cos(la) * lr, Math.sin(la) * lr);
-        sphere(L.X, L.Y, lerp(200, 1737, grow) * scale, "#b8b0a4", "#ffe8c8", 0.7 * (1 - grow * 0.4));
-      }
-
-      const vig = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.25, w / 2, h / 2, Math.max(w, h) * 0.72);
-      vig.addColorStop(0, "rgba(0,0,0,0)");
-      vig.addColorStop(1, "rgba(0,0,0,0.62)");
-      ctx.fillStyle = vig;
-      ctx.fillRect(0, 0, w, h);
-
-      raf = requestAnimationFrame(draw);
-    };
-    raf = requestAnimationFrame(draw);
-    return () => {
-      cancelAnimationFrame(raf);
-      ro.disconnect();
-    };
-  }, [startAt]);
-
-  return <canvas ref={ref} className="h-full w-full bg-house" />;
+  return (
+    <Canvas
+      className="h-full w-full"
+      camera={{ fov: 40, near: 0.2, far: 500, position: [28, 12, 58] }}
+      dpr={[1, 1.75]}
+      gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.15 }}
+    >
+      <Suspense fallback={null}>
+        <World startAt={startAt} />
+      </Suspense>
+    </Canvas>
+  );
 }
