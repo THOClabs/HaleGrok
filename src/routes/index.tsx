@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { TheiaSeries } from "@/components/house/TheiaSeries";
+import { Splash } from "@/components/splash/Splash";
 
 export const Route = createFileRoute("/")({
-  component: TheiaSeries,
+  component: Splash,
   ssr: false,
 });
