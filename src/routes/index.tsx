@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { StudioDesk } from "@/components/desk/StudioDesk";
+import { House } from "@/components/house/House";
 
 export const Route = createFileRoute("/")({
-  component: StudioDesk,
+  component: House,
   ssr: false,
 });
