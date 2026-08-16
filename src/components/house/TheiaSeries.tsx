@@ -5,21 +5,21 @@ import { xComposeUrl } from "@/hale/x-compose";
 import { Button } from "@/components/ui/button";
 import { GATE_ORDER } from "@/hale/types";
 import { TheiaPlayer } from "@/components/house/TheiaPlayer";
-import { TrojanFilm } from "@/components/house/TrojanFilm";
-import { EP01 } from "@/hale/theia/ep01-film";
+import { TenPercentFilm } from "@/components/house/TenPercentFilm";
+import { EP02 } from "@/hale/theia/ep02-film";
 
 const RESULTS: EpisodeResult[] = runTheiaSeries();
 
 function tweet(): string {
   return [
-    `The Trojan Twin — 2:00 · 4K.`,
-    `Theia at Sun–Terra L4. 60.00°. Year 365.26 d. C = 2.999997.`,
-    `Hale wrote it. #HaleGrok`,
+    `Ten Percent — 2:00 · 4K.`,
+    `Routh μ* = 0.03852. Theia/Terra μ = 0.0909. The triangle is no longer dust.`,
+    `Hale. #HaleGrok`,
   ].join("\n");
 }
 
 export function TheiaSeries() {
-  const [on, setOn] = useState(0);
+  const [on, setOn] = useState(1);
   const current = RESULTS[on]!;
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function TheiaSeries() {
             Theia / Terra
           </h1>
           <p className="mt-1 text-sm text-house-mute">
-            {passed}/12 gauntlets · Ep 01 {EP01.title} playing live · {EP01.delivery}
+            {passed}/12 gauntlets · now playing {EP02.title} · {EP02.delivery}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -63,7 +63,7 @@ export function TheiaSeries() {
             Live Hale instrument — same L4 numbers
           </summary>
           <div className="mt-3">
-            <TrojanFilm />
+            <TenPercentFilm />
           </div>
         </details>
 
