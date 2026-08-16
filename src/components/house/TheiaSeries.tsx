@@ -4,17 +4,17 @@ import { runTheiaSeries, type EpisodeResult } from "@/hale/theia/series";
 import { xComposeUrl } from "@/hale/x-compose";
 import { Button } from "@/components/ui/button";
 import { GATE_ORDER } from "@/hale/types";
+import { TheiaPlayer } from "@/components/house/TheiaPlayer";
+import { TrojanFilm } from "@/components/house/TrojanFilm";
+import { EP01 } from "@/hale/theia/ep01-film";
 
 const RESULTS: EpisodeResult[] = runTheiaSeries();
 
 function tweet(): string {
-  const n = RESULTS.filter((r) => r.passed).length;
-  const six = RESULTS[5]!;
   return [
-    `Theia / Terra — 12 × 2:00.`,
-    `${n}/12 Hale gauntlets passed.`,
-    `v_imp(0) ${Number(six.telemetry.v0).toFixed(2)} km/s · Roche ${RESULTS[8]!.telemetry.re.toFixed(2)} R⊕ · Luna ${RESULTS[11]!.telemetry.radii.toFixed(1)} R⊕.`,
-    `#HaleGrok`,
+    `The Trojan Twin — 2:00 · 4K.`,
+    `Theia at Sun–Terra L4. 60.00°. Year 365.26 d. C = 2.999997.`,
+    `Hale wrote it. #HaleGrok`,
   ].join("\n");
 }
 
@@ -40,7 +40,7 @@ export function TheiaSeries() {
             Theia / Terra
           </h1>
           <p className="mt-1 text-sm text-house-mute">
-            {passed}/12 gauntlets passed · each cut ≥ 2:00 · Imagine locked until the script
+            {passed}/12 gauntlets · Ep 01 {EP01.title} playing live · {EP01.delivery}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -57,6 +57,16 @@ export function TheiaSeries() {
       </header>
 
       <main className="flex flex-1 flex-col gap-6 px-3 pb-6 md:px-8">
+        <TheiaPlayer />
+        <details className="rounded-xl border border-house-line px-4 py-3">
+          <summary className="cursor-pointer font-house text-sm text-house-mute">
+            Live Hale instrument — same L4 numbers
+          </summary>
+          <div className="mt-3">
+            <TrojanFilm />
+          </div>
+        </details>
+
         <ol className="grid grid-cols-2 gap-2 md:grid-cols-4 xl:grid-cols-6">
           {RESULTS.map((r, i) => (
             <li key={r.spec.id}>

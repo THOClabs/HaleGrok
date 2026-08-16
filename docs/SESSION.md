@@ -101,7 +101,18 @@ conservation, oracle, and 8 beats. 12/12 pass. Imagine is locked.
 | 11 | A Five-Hour Terra | 5 h day, lunar month 27.28 d |
 | 12 | Luna | EM CR3BP, 60.3 R⊕ |
 
-Next: shoot Episode 1 from the L4 findings only.
+## Session 7 — 2026-08-16
+
+Steer: continue Episode 1 and make it amazing, 4K or better.
+
+Shipped **The Trojan Twin** 2:00 4K (3840×2160, 25 fps):
+- Live Hale instrument (L4 positions, atmospheres, corona, zodiacal dust)
+- Eight unique 15s plates from the gauntlet
+- Master `/films/003/the-trojan-twin-4k.mp4` looping on House
+- Post to X drafts the L4 card
+
+Next: Episode 2 Ten Percent.
+
 
 
 
