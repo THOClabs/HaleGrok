@@ -57,7 +57,7 @@ Each continue-round offers **six to ten films** (a slate), not one.
 - [x] S1b — Long 4K handshake: sim first, we both like it, then commission (no auto Imagine)
 - [x] S1c — The Climb commissioned. Opening reel: clips 1–2 (gloves, first burn)
 - [x] S1d — House: a screening room (not the desk). 2-minute sequenced Climb. Clip 3 arrived.
-- [ ] S1e — Climb clips 4–8 (one per continue) then assemble the 2:00 cut
+- [x] S1e — How Far: 2:00 astronomy documentary from Hale CR3BP + Earth–Mars Hohmann. Eight clips cycling.
 - [ ] S2 — Kepler elliptic/hyperbolic + universal propagation (Ada Kepler) — in progress
 - [ ] S3 — Production 021 Earth–Mars patched-conic (Ada earth_mars_mission)
 - [ ] S4 — Halo / Lyapunov differential correction (Ada Find_Halo_Orbit)
