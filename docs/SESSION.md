@@ -135,7 +135,23 @@ Shipped four more 2:00 4K films from passed scripts:
 | 05 | v∞ | hyperbola, ≤ 4 km/s, ε = 8 |
 | 06 | Nine Point Three | v_imp 9.47 / 10.28 km/s |
 
-House plays Ep 01–06. Next: 07–12.
+## Session 10 — 2026-08-16
+
+Steer: continue deeply, full process, gauntlet.
+
+Closed the series. Ep 07–12 each 2:00 4K from passed scripts:
+
+| Ep | Title | Driver |
+| --- | --- | --- |
+| 07 | Forty-Five Degrees | θ=45°, h=71063, b=12777 |
+| 08 | Iron Sinks | energy only, KE 1.915e6 |
+| 09 | Roche | 2.88 R⊕, 18365 km |
+| 10 | Hours or Years | T 7.32 / 15.74 / 6.88 h |
+| 11 | A Five-Hour Terra | day* 5 h, month 27.28 d |
+| 12 | Luna | EM L1 0.8369, L4, 60.3 R⊕ |
+
+House plays all twelve.
+
 
 
 

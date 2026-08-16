@@ -12,14 +12,14 @@ const RESULTS: EpisodeResult[] = runTheiaSeries();
 
 function tweet(): string {
   return [
-    `Theia / Terra — Ep 03–06 now 4K.`,
-    `Unseating, Hill’s Door, v∞, Nine Point Three.`,
-    `Hale. #HaleGrok`,
+    `Theia / Terra — 12 × 2:00 4K.`,
+    `L4 to Luna. Hale all the way.`,
+    `#HaleGrok`,
   ].join("\n");
 }
 
 export function TheiaSeries() {
-  const [on, setOn] = useState(1);
+  const [on, setOn] = useState(11);
   const current = RESULTS[on]!;
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function TheiaSeries() {
             Theia / Terra
           </h1>
           <p className="mt-1 text-sm text-house-mute">
-            {passed}/12 gauntlets · four new 4K cuts · Unseating → contact
+            {passed}/12 gauntlets · twelve 4K cuts · Theia to Luna
           </p>
         </div>
         <div className="flex items-center gap-3">
